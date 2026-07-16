@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { ArrowLeft, Minus, Plus, Sparkles } from "lucide-react";
 import {
   ITEM_KIND_LABEL,
   PRESET_ITEMS,
@@ -77,10 +78,14 @@ function NovoOrcamento() {
   if (!demo || !data) {
     return (
       <div className="mx-auto max-w-lg p-4">
-        <Link href="/orcamentos" className="text-blue-700">
-          ← Orçamentos
+        <Link
+          href="/orcamentos"
+          className="flex items-center gap-1 font-medium text-blue-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Orçamentos
         </Link>
-        <p className="mt-8 text-center text-zinc-500">
+        <p className="mt-8 text-center text-zinc-600">
           Disponível quando ligarmos a base de dados. Experimente no modo
           demonstração.
         </p>
@@ -152,52 +157,56 @@ function NovoOrcamento() {
   const kinds: ItemKind[] = ["mao_de_obra", "material", "outro"];
 
   return (
-    <div className="mx-auto max-w-lg p-4 pb-32">
+    <div className="mx-auto max-w-lg p-4 pb-40">
       <Link
         href={request ? `/pedidos/${request.id}` : "/orcamentos"}
-        className="text-blue-700"
+        className="flex items-center gap-1 font-medium text-blue-700"
       >
-        ← Voltar
+        <ArrowLeft className="h-4 w-4" />
+        Voltar
       </Link>
-      <h1 className="mt-2 text-2xl font-bold">Novo orçamento</h1>
+      <h1 className="mt-2 text-2xl font-bold text-zinc-900">Novo orçamento</h1>
       {request && (
-        <p className="text-zinc-500">Para: {request.clientName}</p>
+        <p className="font-medium text-zinc-600">Para: {request.clientName}</p>
       )}
 
-      <section className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
-        <h2 className="font-semibold text-blue-900">
-          ✨ Descreva o trabalho e a app sugere os itens
+      <section className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4 shadow-sm">
+        <h2 className="flex items-center gap-2 font-bold text-blue-900">
+          <Sparkles className="h-5 w-5" />
+          Descreva o trabalho e a app sugere os itens
         </h2>
         <textarea
           rows={3}
           value={description}
           onChange={(e) => setEditedDescription(e.target.value)}
           placeholder="Ex.: substituir 3 janelas e colocar 24 ml de rodapé"
-          className="mt-2 w-full rounded-xl border border-blue-200 bg-white p-3 outline-none focus:border-blue-600"
+          className="mt-2 w-full rounded-xl border border-blue-200 bg-white p-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-600"
         />
         <button
           type="button"
           onClick={handleSuggest}
-          className="mt-2 w-full rounded-xl bg-blue-700 p-3 font-semibold text-white active:bg-blue-800"
+          className="mt-2 w-full rounded-xl bg-blue-600 p-3 font-semibold text-white shadow-sm active:bg-blue-700"
         >
           Sugerir itens
         </button>
         {suggested && items.length === 0 && (
-          <p className="mt-2 text-sm text-blue-800">
+          <p className="mt-2 text-sm font-medium text-blue-900">
             Não reconheci nenhum item — adicione manualmente em baixo.
           </p>
         )}
       </section>
 
       {items.length > 0 && (
-        <section className="mt-4 rounded-xl border border-zinc-200 bg-white p-4">
-          <h2 className="text-sm font-semibold text-zinc-500">NO ORÇAMENTO</h2>
+        <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            No orçamento
+          </h2>
           <ul className="mt-2 flex flex-col gap-3">
             {items.map((i) => (
               <li key={i.id} className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="truncate font-medium">{i.description}</p>
-                  <p className="text-sm text-zinc-500">
+                  <p className="truncate font-semibold text-zinc-900">{i.description}</p>
+                  <p className="text-sm font-medium text-zinc-600">
                     {i.quantity} {i.unit} × {formatEUR(i.unitPrice)} ={" "}
                     {formatEUR(i.quantity * i.unitPrice)}
                   </p>
@@ -206,19 +215,19 @@ function NovoOrcamento() {
                   <button
                     type="button"
                     onClick={() => changeQuantity(i.id, -1)}
-                    className="h-10 w-10 rounded-lg border border-zinc-300 text-xl font-bold text-zinc-600 active:bg-zinc-100"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-300 bg-white text-zinc-700 active:bg-zinc-100"
                   >
-                    −
+                    <Minus className="h-5 w-5" strokeWidth={2.5} />
                   </button>
-                  <span className="w-8 text-center font-semibold">
+                  <span className="w-8 text-center font-bold text-zinc-900">
                     {i.quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => changeQuantity(i.id, 1)}
-                    className="h-10 w-10 rounded-lg border border-zinc-300 text-xl font-bold text-zinc-600 active:bg-zinc-100"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-300 bg-white text-zinc-700 active:bg-zinc-100"
                   >
-                    +
+                    <Plus className="h-5 w-5" strokeWidth={2.5} />
                   </button>
                 </div>
               </li>
@@ -232,8 +241,8 @@ function NovoOrcamento() {
         if (presets.length === 0) return null;
         return (
           <section key={kind} className="mt-4">
-            <h2 className="text-sm font-semibold text-zinc-500">
-              {ITEM_KIND_LABEL[kind].toUpperCase()}
+            <h2 className="px-1 text-xs font-bold uppercase tracking-wider text-zinc-600">
+              {ITEM_KIND_LABEL[kind]}
             </h2>
             <div className="mt-2 flex flex-wrap gap-2">
               {presets.map((p) => (
@@ -241,7 +250,7 @@ function NovoOrcamento() {
                   key={p.description}
                   type="button"
                   onClick={() => addPreset(p)}
-                  className="rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm active:bg-zinc-100"
+                  className="rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 shadow-sm active:bg-zinc-100"
                 >
                   + {p.description}
                 </button>
@@ -251,17 +260,17 @@ function NovoOrcamento() {
         );
       })}
 
-      <div className="fixed inset-x-0 bottom-16 border-t border-zinc-200 bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <div className="fixed inset-x-0 bottom-24 border-t border-zinc-200 bg-white p-4">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
           <div>
-            <p className="text-sm text-zinc-500">Subtotal (s/ IVA)</p>
-            <p className="text-xl font-bold">{formatEUR(subtotal)}</p>
+            <p className="text-sm font-medium text-zinc-600">Subtotal (s/ IVA)</p>
+            <p className="text-xl font-bold text-zinc-900">{formatEUR(subtotal)}</p>
           </div>
           <button
             type="button"
             disabled={items.length === 0}
             onClick={handleSave}
-            className="rounded-xl bg-blue-700 px-8 py-4 text-lg font-semibold text-white active:bg-blue-800 disabled:opacity-40"
+            className="rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-sm active:bg-blue-700 disabled:opacity-40"
           >
             Guardar
           </button>

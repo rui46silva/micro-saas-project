@@ -3,6 +3,14 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
+  AlarmClock,
+  ArrowLeft,
+  Check,
+  FileText,
+  MessageCircle,
+  X,
+} from "lucide-react";
+import {
   ITEM_KIND_LABEL,
   QUOTE_STATUS_LABEL,
   QUOTE_STATUS_STYLE,
@@ -28,10 +36,14 @@ export default function OrcamentoDetailPage() {
   if (!demo || !quote) {
     return (
       <div className="mx-auto max-w-lg p-4">
-        <Link href="/orcamentos" className="text-blue-700">
-          ← Orçamentos
+        <Link
+          href="/orcamentos"
+          className="flex items-center gap-1 font-medium text-blue-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Orçamentos
         </Link>
-        <p className="mt-8 text-center text-zinc-500">
+        <p className="mt-8 text-center text-zinc-600">
           Orçamento não encontrado.
         </p>
       </div>
@@ -62,26 +74,33 @@ export default function OrcamentoDetailPage() {
 
   return (
     <div className="mx-auto max-w-lg p-4">
-      <Link href="/orcamentos" className="text-blue-700">
-        ← Orçamentos
+      <Link
+        href="/orcamentos"
+        className="flex items-center gap-1 font-medium text-blue-700"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Orçamentos
       </Link>
 
       <div className="mt-2 flex items-start justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold">{quote.reference}</h1>
-          <p className="text-zinc-500">{quote.clientName}</p>
+          <h1 className="text-2xl font-bold text-zinc-900">
+            {quote.reference}
+          </h1>
+          <p className="font-medium text-zinc-600">{quote.clientName}</p>
         </div>
         <span
-          className={`mt-1 shrink-0 rounded-full px-3 py-1 text-xs font-medium ${QUOTE_STATUS_STYLE[quote.status]}`}
+          className={`mt-1 shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${QUOTE_STATUS_STYLE[quote.status]}`}
         >
           {QUOTE_STATUS_LABEL[quote.status]}
         </span>
       </div>
 
       {needsFollowUp(quote) && client && (
-        <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
-          <p className="font-medium text-amber-900">
-            ⏰ Enviado há {daysSince(quote.sentAt!)} dias sem resposta.
+        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+          <p className="flex items-center gap-2 font-bold text-amber-900">
+            <AlarmClock className="h-5 w-5" />
+            Enviado há {daysSince(quote.sentAt!)} dias sem resposta.
           </p>
           <a
             href={waLink(
@@ -90,9 +109,10 @@ export default function OrcamentoDetailPage() {
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 block rounded-lg bg-green-600 p-2 text-center font-medium text-white active:bg-green-700"
+            className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 p-2.5 font-semibold text-white active:bg-emerald-700"
           >
-            💬 Relembrar no WhatsApp
+            <MessageCircle className="h-5 w-5" />
+            Relembrar no WhatsApp
           </a>
         </div>
       )}
@@ -103,22 +123,22 @@ export default function OrcamentoDetailPage() {
         return (
           <section
             key={kind}
-            className="mt-4 rounded-xl border border-zinc-200 bg-white p-4"
+            className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
           >
-            <h2 className="text-sm font-semibold text-zinc-500">
-              {ITEM_KIND_LABEL[kind].toUpperCase()}
+            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+              {ITEM_KIND_LABEL[kind]}
             </h2>
             <ul className="mt-2 flex flex-col gap-2">
               {items.map((i) => (
                 <li key={i.id} className="flex justify-between gap-2 text-sm">
-                  <span>
+                  <span className="text-zinc-800">
                     {i.description}
-                    <span className="text-zinc-400">
+                    <span className="font-medium text-zinc-500">
                       {" "}
                       · {i.quantity} {i.unit} × {formatEUR(i.unitPrice)}
                     </span>
                   </span>
-                  <span className="shrink-0 font-medium">
+                  <span className="shrink-0 font-semibold text-zinc-900">
                     {formatEUR(i.quantity * i.unitPrice)}
                   </span>
                 </li>
@@ -128,16 +148,16 @@ export default function OrcamentoDetailPage() {
         );
       })}
 
-      <section className="mt-4 rounded-xl border border-zinc-200 bg-white p-4">
-        <div className="flex justify-between text-sm text-zinc-600">
+      <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <div className="flex justify-between text-sm font-medium text-zinc-600">
           <span>Subtotal</span>
           <span>{formatEUR(subtotal)}</span>
         </div>
-        <div className="mt-1 flex justify-between text-sm text-zinc-600">
+        <div className="mt-1 flex justify-between text-sm font-medium text-zinc-600">
           <span>IVA (23%)</span>
           <span>{formatEUR(subtotal * IVA)}</span>
         </div>
-        <div className="mt-2 flex justify-between border-t border-zinc-200 pt-2 text-lg font-bold">
+        <div className="mt-2 flex justify-between border-t border-zinc-200 pt-2 text-lg font-bold text-zinc-900">
           <span>Total</span>
           <span>{formatEUR(total)}</span>
         </div>
@@ -150,9 +170,10 @@ export default function OrcamentoDetailPage() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setStatus("enviado")}
-            className="rounded-xl bg-green-600 p-4 text-center text-lg font-semibold text-white active:bg-green-700"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 p-4 text-lg font-semibold text-white shadow-sm active:bg-emerald-700"
           >
-            💬 Enviar por WhatsApp
+            <MessageCircle className="h-5 w-5" />
+            Enviar por WhatsApp
           </a>
         )}
         {quote.status === "enviado" && (
@@ -160,24 +181,27 @@ export default function OrcamentoDetailPage() {
             <button
               type="button"
               onClick={() => setStatus("aceite")}
-              className="flex-1 rounded-xl bg-green-600 p-4 font-semibold text-white active:bg-green-700"
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-emerald-600 p-4 font-semibold text-white shadow-sm active:bg-emerald-700"
             >
-              ✅ Aceite
+              <Check className="h-5 w-5" strokeWidth={2.5} />
+              Aceite
             </button>
             <button
               type="button"
               onClick={() => setStatus("recusado")}
-              className="flex-1 rounded-xl border border-red-300 bg-white p-4 font-semibold text-red-600 active:bg-red-50"
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-red-300 bg-white p-4 font-semibold text-red-700 shadow-sm active:bg-red-50"
             >
+              <X className="h-5 w-5" strokeWidth={2.5} />
               Recusado
             </button>
           </div>
         )}
         <Link
           href={`/orcamentos/${quote.id}/pdf`}
-          className="rounded-xl border border-zinc-300 bg-white p-4 text-center text-lg font-semibold text-zinc-700 active:bg-zinc-50"
+          className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white p-4 text-lg font-semibold text-zinc-800 shadow-sm active:bg-zinc-50"
         >
-          📄 Ver PDF
+          <FileText className="h-5 w-5" />
+          Ver PDF
         </Link>
       </div>
     </div>

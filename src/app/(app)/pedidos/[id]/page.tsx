@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ArrowLeft, Camera, MessageCircle, Phone, Plus } from "lucide-react";
 import {
   QUOTE_STATUS_LABEL,
   QUOTE_STATUS_STYLE,
@@ -34,12 +35,14 @@ export default function PedidoDetailPage() {
   if (!demo || !request) {
     return (
       <div className="mx-auto max-w-lg p-4">
-        <Link href="/pedidos" className="text-blue-700">
-          ← Pedidos
+        <Link
+          href="/pedidos"
+          className="flex items-center gap-1 font-medium text-blue-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Pedidos
         </Link>
-        <p className="mt-8 text-center text-zinc-500">
-          Pedido não encontrado.
-        </p>
+        <p className="mt-8 text-center text-zinc-600">Pedido não encontrado.</p>
       </div>
     );
   }
@@ -48,19 +51,25 @@ export default function PedidoDetailPage() {
 
   return (
     <div className="mx-auto max-w-lg p-4">
-      <Link href="/pedidos" className="text-blue-700">
-        ← Pedidos
+      <Link
+        href="/pedidos"
+        className="flex items-center gap-1 font-medium text-blue-700"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Pedidos
       </Link>
 
       <div className="mt-2 flex items-start justify-between gap-2">
-        <h1 className="text-2xl font-bold">{request.clientName}</h1>
+        <h1 className="text-2xl font-bold text-zinc-900">
+          {request.clientName}
+        </h1>
         <span
-          className={`mt-1 shrink-0 rounded-full px-3 py-1 text-xs font-medium ${REQUEST_STATUS_STYLE[request.status]}`}
+          className={`mt-1 shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${REQUEST_STATUS_STYLE[request.status]}`}
         >
           {REQUEST_STATUS_LABEL[request.status]}
         </span>
       </div>
-      <p className="text-sm text-zinc-400">
+      <p className="text-sm font-medium text-zinc-500">
         Pedido {formatRelative(request.createdAt)}
       </p>
 
@@ -68,9 +77,10 @@ export default function PedidoDetailPage() {
         <div className="mt-4 flex gap-2">
           <a
             href={`tel:${request.clientPhone.replace(/\s/g, "")}`}
-            className="flex-1 rounded-xl border border-zinc-300 bg-white p-3 text-center font-medium active:bg-zinc-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white p-3 font-semibold text-zinc-800 shadow-sm active:bg-zinc-50"
           >
-            📞 Ligar
+            <Phone className="h-5 w-5" />
+            Ligar
           </a>
           <a
             href={waLink(
@@ -79,33 +89,38 @@ export default function PedidoDetailPage() {
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 rounded-xl border border-green-600 bg-green-50 p-3 text-center font-medium text-green-800 active:bg-green-100"
+            className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-emerald-600 p-3 font-semibold text-white shadow-sm active:bg-emerald-700"
           >
-            💬 WhatsApp
+            <MessageCircle className="h-5 w-5" />
+            WhatsApp
           </a>
         </div>
       )}
 
-      <section className="mt-4 rounded-xl border border-zinc-200 bg-white p-4">
-        <h2 className="text-sm font-semibold text-zinc-500">O TRABALHO</h2>
-        <p className="mt-1">{request.description}</p>
+      <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+          O trabalho
+        </h2>
+        <p className="mt-1 text-zinc-800">{request.description}</p>
         {request.photoCount > 0 && (
           <div className="mt-3 flex gap-2">
             {Array.from({ length: request.photoCount }).map((_, i) => (
               <span
                 key={i}
-                className="flex h-16 w-16 items-center justify-center rounded-lg bg-zinc-100 text-2xl"
+                className="flex h-16 w-16 items-center justify-center rounded-xl bg-zinc-100"
                 aria-label="Foto da obra (exemplo)"
               >
-                📷
+                <Camera className="h-6 w-6 text-zinc-400" />
               </span>
             ))}
           </div>
         )}
       </section>
 
-      <section className="mt-4 rounded-xl border border-zinc-200 bg-white p-4">
-        <h2 className="text-sm font-semibold text-zinc-500">ESTADO</h2>
+      <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+          Estado
+        </h2>
         <div className="mt-2 flex flex-wrap gap-2">
           {STATUS_FLOW.map((s) => (
             <button
@@ -118,10 +133,10 @@ export default function PedidoDetailPage() {
                   return d;
                 })
               }
-              className={`rounded-full px-4 py-2 text-sm font-medium ${
+              className={`rounded-full px-4 py-2 text-sm font-semibold ${
                 request.status === s
-                  ? "bg-blue-700 text-white"
-                  : "border border-zinc-300 bg-white text-zinc-600"
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "border border-zinc-300 bg-white text-zinc-700"
               }`}
             >
               {REQUEST_STATUS_LABEL[s]}
@@ -130,10 +145,12 @@ export default function PedidoDetailPage() {
         </div>
       </section>
 
-      <section className="mt-4 rounded-xl border border-zinc-200 bg-white p-4">
-        <h2 className="text-sm font-semibold text-zinc-500">ORÇAMENTOS</h2>
+      <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+          Orçamentos
+        </h2>
         {quotes.length === 0 && (
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1 text-sm text-zinc-600">
             Ainda sem orçamento para este pedido.
           </p>
         )}
@@ -142,13 +159,13 @@ export default function PedidoDetailPage() {
             <li key={q.id}>
               <Link
                 href={`/orcamentos/${q.id}`}
-                className="flex items-center justify-between rounded-lg border border-zinc-200 p-3 active:bg-zinc-50"
+                className="flex items-center justify-between rounded-xl border border-zinc-200 p-3 active:bg-zinc-50"
               >
-                <span className="font-medium">
+                <span className="font-semibold text-zinc-900">
                   {q.reference} · {formatEUR(quoteTotal(q))}
                 </span>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-medium ${QUOTE_STATUS_STYLE[q.status]}`}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${QUOTE_STATUS_STYLE[q.status]}`}
                 >
                   {QUOTE_STATUS_LABEL[q.status]}
                 </span>
@@ -158,9 +175,10 @@ export default function PedidoDetailPage() {
         </ul>
         <Link
           href={`/orcamentos/novo?pedido=${request.id}`}
-          className="mt-3 block rounded-xl bg-blue-700 p-4 text-center text-lg font-semibold text-white active:bg-blue-800"
+          className="mt-3 flex items-center justify-center gap-2 rounded-2xl bg-blue-600 p-4 text-lg font-semibold text-white shadow-sm active:bg-blue-700"
         >
-          + Criar orçamento
+          <Plus className="h-5 w-5" strokeWidth={2.5} />
+          Criar orçamento
         </Link>
       </section>
     </div>

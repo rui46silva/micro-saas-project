@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ArrowLeft, Hammer, Printer } from "lucide-react";
 import {
   ITEM_KIND_LABEL,
   type ItemKind,
@@ -24,10 +25,14 @@ export default function OrcamentoPdfPage() {
   if (!demo || !quote) {
     return (
       <div className="mx-auto max-w-lg p-4">
-        <Link href="/orcamentos" className="text-blue-700">
-          ← Orçamentos
+        <Link
+          href="/orcamentos"
+          className="flex items-center gap-1 font-medium text-blue-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Orçamentos
         </Link>
-        <p className="mt-8 text-center text-zinc-500">
+        <p className="mt-8 text-center text-zinc-600">
           Orçamento não encontrado.
         </p>
       </div>
@@ -41,23 +46,28 @@ export default function OrcamentoPdfPage() {
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="flex items-center justify-between print:hidden">
-        <Link href={`/orcamentos/${quote.id}`} className="text-blue-700">
-          ← Voltar
+        <Link
+          href={`/orcamentos/${quote.id}`}
+          className="flex items-center gap-1 font-medium text-blue-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar
         </Link>
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-xl bg-blue-700 px-6 py-3 font-semibold text-white active:bg-blue-800"
+          className="flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-sm active:bg-blue-700"
         >
-          🖨️ Imprimir / Guardar PDF
+          <Printer className="h-5 w-5" />
+          Imprimir / Guardar PDF
         </button>
       </div>
 
-      <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-8 shadow-sm print:mt-0 print:rounded-none print:border-0 print:shadow-none">
+      <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm print:mt-0 print:rounded-none print:border-0 print:shadow-none">
         <header className="flex items-start justify-between border-b border-zinc-200 pb-6">
           <div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-blue-700 text-2xl text-white">
-              🪚
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 text-white">
+              <Hammer className="h-7 w-7" strokeWidth={2.2} />
             </div>
             <h1 className="mt-2 text-xl font-bold">Carpintaria Exemplo</h1>
             <p className="text-sm text-zinc-500">
@@ -67,7 +77,7 @@ export default function OrcamentoPdfPage() {
             </p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-blue-700">ORÇAMENTO</p>
+            <p className="text-2xl font-bold text-blue-600">ORÇAMENTO</p>
             <p className="mt-1 font-medium">{quote.reference}</p>
             <p className="text-sm text-zinc-500">
               {formatDate(quote.createdAt)}

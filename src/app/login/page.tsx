@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, Hammer, MailCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -35,19 +36,23 @@ export default function LoginPage() {
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-8 p-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-blue-700">Apontado</h1>
+      <div className="flex flex-col items-center text-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 shadow-lg">
+          <Hammer className="h-8 w-8 text-white" strokeWidth={2.2} />
+        </span>
+        <h1 className="mt-3 text-3xl font-bold text-zinc-900">Apontado</h1>
         <p className="mt-2 text-zinc-600">
           Pedidos, orçamentos e clientes — tudo no telemóvel.
         </p>
       </div>
 
       {sent ? (
-        <div className="w-full max-w-sm rounded-xl bg-green-50 p-6 text-center">
-          <p className="text-lg font-semibold text-green-800">
-            Email enviado ✅
+        <div className="flex w-full max-w-sm flex-col items-center rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+          <MailCheck className="h-8 w-8 text-emerald-700" />
+          <p className="mt-2 text-lg font-semibold text-emerald-900">
+            Email enviado
           </p>
-          <p className="mt-2 text-green-700">
+          <p className="mt-1 text-emerald-800">
             Abra o email e toque no link para entrar.
           </p>
         </div>
@@ -57,7 +62,7 @@ export default function LoginPage() {
           className="flex w-full max-w-sm flex-col gap-4"
         >
           <label className="flex flex-col gap-2">
-            <span className="font-medium">O seu email</span>
+            <span className="font-semibold text-zinc-800">O seu email</span>
             <input
               type="email"
               required
@@ -66,21 +71,21 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="exemplo@gmail.com"
-              className="rounded-xl border border-zinc-300 bg-white p-4 text-lg outline-none focus:border-blue-600"
+              className="rounded-2xl border border-zinc-300 bg-white p-4 text-lg text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-600"
             />
           </label>
 
-          {error && <p className="text-red-600">{error}</p>}
+          {error && <p className="font-medium text-red-700">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl bg-blue-700 p-4 text-lg font-semibold text-white active:bg-blue-800 disabled:opacity-50"
+            className="rounded-2xl bg-blue-600 p-4 text-lg font-semibold text-white shadow-sm active:bg-blue-700 disabled:opacity-50"
           >
             {loading ? "A enviar…" : "Entrar"}
           </button>
 
-          <p className="text-center text-sm text-zinc-500">
+          <p className="text-center text-sm text-zinc-600">
             Sem palavras-passe: enviamos um link para o seu email e basta tocar
             nele.
           </p>
@@ -93,9 +98,10 @@ export default function LoginPage() {
           enterDemo();
           router.push("/pedidos");
         }}
-        className="rounded-xl border-2 border-blue-700 px-6 py-3 font-semibold text-blue-700 active:bg-blue-50"
+        className="flex items-center gap-2 rounded-2xl border-2 border-blue-600 bg-white px-6 py-3 font-semibold text-blue-700 active:bg-blue-50"
       >
-        👀 Ver demonstração
+        <Eye className="h-5 w-5" />
+        Ver demonstração
       </button>
     </main>
   );
