@@ -63,6 +63,45 @@ Resolver a dor nº 1: **orçamentos e pedidos perdidos.**
 - **IA:** Claude para estruturar orçamentos a partir de texto/voz
 - **Integrações:** WhatsApp (deep links), email, e faturação (Fase 2)
 
+## Como correr localmente
+
+1. **Criar o projeto Supabase** (grátis) em [supabase.com](https://supabase.com)
+   — escolher a região `eu-west` (Irlanda) ou `eu-central` (Frankfurt).
+2. **Aplicar o schema:** copiar o conteúdo de
+   `supabase/migrations/20260716000000_initial_schema.sql` para o SQL Editor
+   do dashboard e executar (ou usar a CLI: `supabase db push`).
+3. **Configurar variáveis:** copiar `.env.example` para `.env.local` e
+   preencher com o URL e a anon key do projeto (Project Settings → API).
+4. **Instalar e arrancar:**
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+5. Abrir `http://localhost:3000` — o login é por link mágico enviado por
+   email (sem palavras-passe, de propósito: menos fricção para o utilizador).
+
+## Estrutura
+
+```
+src/
+  app/
+    login/            # Entrada por link mágico (email)
+    auth/confirm/     # Callback de verificação do link
+    (app)/            # Área autenticada, com navegação inferior
+      pedidos/        # Feature 1 — gestão de pedidos/leads
+      orcamentos/     # Feature 2 — orçamentos em minutos
+      clientes/       # Feature 4 — o "caderninho" digital
+  components/         # Componentes partilhados (ex.: BottomNav)
+  lib/supabase/       # Clientes Supabase (browser + server)
+  proxy.ts            # Refresh de sessão + proteção de rotas
+supabase/
+  migrations/         # Schema SQL (tabelas, RLS, itens pré-carregados)
+```
+
 ## Estado
 
-🚧 Fase inicial — a montar o esqueleto do MVP.
+🚧 Esqueleto do MVP montado: PWA Next.js + Supabase (auth, schema com RLS,
+itens de carpintaria pré-carregados). Próximo passo: feature 1 — entrada
+rápida de pedidos.
