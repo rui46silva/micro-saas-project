@@ -4,6 +4,11 @@ import { NextResponse, type NextRequest } from "next/server";
 const PUBLIC_PATHS = ["/login", "/auth"];
 
 export async function proxy(request: NextRequest) {
+  // Modo demonstração: acesso sem login, com dados fictícios locais.
+  if (request.cookies.get("apontado_demo")?.value === "1") {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

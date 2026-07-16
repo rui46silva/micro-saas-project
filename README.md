@@ -1,4 +1,4 @@
-# ObraFácil (nome provisório)
+# Apontado (nome provisório)
 
 > Micro-SaaS mobile-first para carpinteiros, canalizadores e pequenos empreiteiros
 > gerirem **pedidos, orçamentos e clientes** a partir do telemóvel — sem saber nada
@@ -117,8 +117,22 @@ supabase/
 Cada `git push` passa a fazer deploy automático: a branch de produção vai
 para o domínio principal e as outras branches geram previews.
 
+## Modo demonstração
+
+No ecrã de login, o botão **"👀 Ver demonstração"** entra na app sem conta,
+com os dados fictícios de uma carpintaria (clientes, pedidos em vários
+estados, orçamentos com follow-up pendente). Tudo funciona: criar pedidos,
+gerar orçamentos com itens pré-carregados e sugestão a partir da descrição,
+enviar por WhatsApp, marcar aceite/recusado, ver o PDF.
+
+Os dados vivem em `localStorage` (as alterações persistem no dispositivo);
+o banner amarelo permite **Repor** os dados de exemplo ou **Sair** da demo.
+Na versão real, estes ecrãs passam a ler/escrever no Supabase — o modo demo
+é a especificação viva do produto.
+
 ## Estado
 
-🚧 Esqueleto do MVP montado: PWA Next.js + Supabase (auth, schema com RLS,
-itens de carpintaria pré-carregados). Próximo passo: feature 1 — entrada
-rápida de pedidos.
+🚧 MVP demonstrável: PWA Next.js + Supabase (auth, schema com RLS) e modo
+demo completo com todos os fluxos da Fase 1 — pedidos, orçamentos com
+sugestão de itens, envio por WhatsApp, follow-up e PDF. Próximo passo:
+ligar os ecrãs ao Supabase (dados reais).

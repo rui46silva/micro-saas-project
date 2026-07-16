@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ObraFácil",
-    short_name: "ObraFácil",
+    name: "Apontado",
+    short_name: "Apontado",
     description:
       "Pedidos, orçamentos e clientes — tudo no telemóvel, sem complicações.",
     start_url: "/",

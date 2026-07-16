@@ -1,5 +1,5 @@
 -- ============================================================
--- ObraFácil — schema inicial (Fase 1 / MVP)
+-- Apontado — schema inicial (Fase 1 / MVP)
 -- Aplicar via Supabase CLI (supabase db push) ou SQL Editor.
 -- ============================================================
 

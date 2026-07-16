@@ -1,4 +1,5 @@
 import { BottomNav } from "@/components/bottom-nav";
+import { DemoBanner } from "@/components/demo-banner";
 
 export default function AppLayout({
   children,
@@ -7,6 +8,7 @@ export default function AppLayout({
 }>) {
   return (
     <div className="flex min-h-dvh flex-col">
+      <DemoBanner />
       <main className="flex-1 pb-20">{children}</main>
       <BottomNav />
     </div>

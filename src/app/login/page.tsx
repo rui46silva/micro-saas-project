@@ -1,9 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { enterDemo } from "@/lib/demo/store";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +36,7 @@ export default function LoginPage() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-8 p-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-blue-700">ObraFácil</h1>
+        <h1 className="text-3xl font-bold text-blue-700">Apontado</h1>
         <p className="mt-2 text-zinc-600">
           Pedidos, orçamentos e clientes — tudo no telemóvel.
         </p>
@@ -83,6 +86,17 @@ export default function LoginPage() {
           </p>
         </form>
       )}
+
+      <button
+        type="button"
+        onClick={() => {
+          enterDemo();
+          router.push("/pedidos");
+        }}
+        className="rounded-xl border-2 border-blue-700 px-6 py-3 font-semibold text-blue-700 active:bg-blue-50"
+      >
+        👀 Ver demonstração
+      </button>
     </main>
   );
 }

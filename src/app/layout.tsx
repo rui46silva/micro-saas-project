@@ -8,14 +8,14 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "ObraFácil",
+  title: "Apontado",
   description:
     "Pedidos, orçamentos e clientes — tudo no telemóvel, sem complicações.",
-  applicationName: "ObraFácil",
+  applicationName: "Apontado",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ObraFácil",
+    title: "Apontado",
   },
 };
 
