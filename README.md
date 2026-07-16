@@ -100,6 +100,23 @@ supabase/
   migrations/         # Schema SQL (tabelas, RLS, itens pré-carregados)
 ```
 
+## Deploy (Vercel)
+
+1. Em [vercel.com](https://vercel.com), **Add New → Project** e importar este
+   repositório do GitHub.
+2. Em **Settings → Environment Variables**, definir:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. Se a app ainda vive na branch de desenvolvimento, definir a **Production
+   Branch** em Settings → Git (ou fazer merge para `main`).
+4. Deploy. Depois, no Supabase (**Authentication → URL Configuration**):
+   - **Site URL:** `https://<projeto>.vercel.app`
+   - **Redirect URLs:** adicionar `https://<projeto>.vercel.app/auth/confirm`
+     (manter também a de `localhost` para desenvolvimento).
+
+Cada `git push` passa a fazer deploy automático: a branch de produção vai
+para o domínio principal e as outras branches geram previews.
+
 ## Estado
 
 🚧 Esqueleto do MVP montado: PWA Next.js + Supabase (auth, schema com RLS,
