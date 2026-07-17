@@ -126,7 +126,7 @@ async function loadAll(): Promise<void> {
   }
 
   const [prof, clients, requests, quotes] = await Promise.all([
-    sb.from("profiles").select("*").eq("id", user.id).single(),
+    sb.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     sb.from("clients").select("*").order("name"),
     sb.from("requests").select("*").order("created_at", { ascending: false }),
     sb
@@ -134,6 +134,18 @@ async function loadAll(): Promise<void> {
       .select("*, quote_items(*)")
       .order("created_at", { ascending: false }),
   ]);
+
+  // Contas criadas antes do trigger de perfis podem não ter linha em
+  // profiles — cria-a aqui para a app nunca ficar sem perfil.
+  let profileRow = (prof.data as ProfileRow | null) ?? null;
+  if (!profileRow) {
+    const { data: created } = await sb
+      .from("profiles")
+      .insert({ id: user.id, email: user.email })
+      .select("*")
+      .single();
+    profileRow = (created as ProfileRow | null) ?? null;
+  }
 
   const clientRows = (clients.data ?? []) as ClientRow[];
   const requestRows = (requests.data ?? []) as RequestRow[];
@@ -144,8 +156,8 @@ async function loadAll(): Promise<void> {
   );
 
   const data: DemoData = {
-    profile: prof.data
-      ? mapProfile(prof.data as ProfileRow)
+    profile: profileRow
+      ? mapProfile(profileRow)
       : { trade: "carpintaria", isAdmin: false, accountStatus: "ativa" },
     clients: clientRows.map((c) => ({
       id: c.id,
