@@ -12,12 +12,29 @@ export type QuoteStatus = "rascunho" | "enviado" | "aceite" | "recusado";
 
 export type ItemKind = "mao_de_obra" | "material" | "outro";
 
+export type AccountStatus = "ativa" | "pausada";
+
+export interface Profile {
+  id?: string;
+  email?: string;
+  fullName?: string;
+  businessName?: string;
+  phone?: string;
+  trade: string;
+  address?: string;
+  nif?: string;
+  isAdmin: boolean;
+  accountStatus: AccountStatus;
+  pausedReason?: string;
+}
+
 export interface DemoClient {
   id: string;
   name: string;
   phone: string;
   address?: string;
   notes?: string;
+  createdAt?: string;
 }
 
 export interface DemoRequest {
@@ -29,6 +46,7 @@ export interface DemoRequest {
   status: RequestStatus;
   photoCount: number;
   createdAt: string;
+  rating?: number;
 }
 
 export interface DemoQuoteItem {
@@ -48,11 +66,13 @@ export interface DemoQuote {
   reference: string;
   status: QuoteStatus;
   sentAt?: string;
+  paidAt?: string;
   items: DemoQuoteItem[];
   createdAt: string;
 }
 
 export interface DemoData {
+  profile: Profile;
   clients: DemoClient[];
   requests: DemoRequest[];
   quotes: DemoQuote[];
@@ -172,6 +192,18 @@ export function waLink(phone: string | undefined, text: string): string {
 export function seedData(): DemoData {
   const daysAgo = (d: number) => new Date(Date.now() - d * 86_400_000).toISOString();
 
+  const profile: Profile = {
+    email: "demo@apontado.pt",
+    fullName: "João Silva",
+    businessName: "Carpintaria Exemplo",
+    phone: "910 000 000",
+    trade: "carpintaria",
+    address: "Rua da Oficina 8, Braga",
+    nif: "123 456 789",
+    isAdmin: false,
+    accountStatus: "ativa",
+  };
+
   const clients: DemoClient[] = [
     {
       id: "c1",
@@ -179,12 +211,14 @@ export function seedData(): DemoData {
       phone: "912 345 671",
       address: "Rua das Flores 12, Braga",
       notes: "Prefere ser contactada depois das 18h.",
+      createdAt: daysAgo(60),
     },
     {
       id: "c2",
       name: "António Ferreira",
       phone: "917 654 322",
       address: "Av. da Liberdade 45, 2.º Esq, Guimarães",
+      createdAt: daysAgo(145),
     },
     {
       id: "c3",
@@ -192,12 +226,14 @@ export function seedData(): DemoData {
       phone: "925 111 333",
       address: "Praça do Comércio 3, Braga",
       notes: "Obras só à segunda-feira (dia de descanso do café).",
+      createdAt: daysAgo(150),
     },
     {
       id: "c4",
       name: "Joana Melo",
       phone: "934 222 444",
       address: "Quinta do Souto, lote 7, Vila Verde",
+      createdAt: daysAgo(10),
     },
   ];
 
@@ -266,6 +302,29 @@ export function seedData(): DemoData {
       status: "concluido",
       photoCount: 6,
       createdAt: daysAgo(35),
+      rating: 5,
+    },
+    {
+      id: "r7",
+      clientId: "c1",
+      clientName: "Maria Santos",
+      clientPhone: "912 345 671",
+      description: "Substituição de porta interior e afinação dos armários da cozinha.",
+      status: "concluido",
+      photoCount: 2,
+      createdAt: daysAgo(55),
+      rating: 5,
+    },
+    {
+      id: "r8",
+      clientId: "c4",
+      clientName: "Joana Melo",
+      clientPhone: "934 222 444",
+      description: "Estantes por medida na sala, em carvalho, do chão ao teto.",
+      status: "concluido",
+      photoCount: 4,
+      createdAt: daysAgo(82),
+      rating: 4,
     },
   ];
 
@@ -295,6 +354,7 @@ export function seedData(): DemoData {
       reference: "2026-013",
       status: "aceite",
       sentAt: daysAgo(12),
+      paidAt: daysAgo(9),
       createdAt: daysAgo(14),
       items: [
         { id: "q2i1", kind: "mao_de_obra", description: "Balcão em carvalho 3,5 m (fabrico e instalação)", quantity: 1, unit: "un", unitPrice: 1450 },
@@ -317,6 +377,65 @@ export function seedData(): DemoData {
       ],
     },
     {
+      id: "q5",
+      requestId: "r6",
+      clientId: "c2",
+      clientName: "António Ferreira",
+      reference: "2026-012",
+      status: "aceite",
+      sentAt: daysAgo(40),
+      paidAt: daysAgo(30),
+      createdAt: daysAgo(42),
+      items: [
+        { id: "q5i1", kind: "mao_de_obra", description: "Montagem de cozinha completa", quantity: 1, unit: "un", unitPrice: 350 },
+      ],
+    },
+    {
+      id: "q6",
+      requestId: "r7",
+      clientId: "c1",
+      clientName: "Maria Santos",
+      reference: "2026-006",
+      status: "aceite",
+      sentAt: daysAgo(56),
+      paidAt: daysAgo(50),
+      createdAt: daysAgo(57),
+      items: [
+        { id: "q6i1", kind: "mao_de_obra", description: "Instalação de porta interior", quantity: 1, unit: "un", unitPrice: 60 },
+        { id: "q6i2", kind: "material", description: "Porta interior (folha)", quantity: 1, unit: "un", unitPrice: 85 },
+        { id: "q6i3", kind: "mao_de_obra", description: "Afinação de armários", quantity: 1, unit: "un", unitPrice: 45 },
+      ],
+    },
+    {
+      id: "q7",
+      requestId: "r8",
+      clientId: "c4",
+      clientName: "Joana Melo",
+      reference: "2026-005",
+      status: "aceite",
+      sentAt: daysAgo(84),
+      paidAt: daysAgo(74),
+      createdAt: daysAgo(85),
+      items: [
+        { id: "q7i1", kind: "mao_de_obra", description: "Estantes por medida (fabrico e montagem)", quantity: 1, unit: "un", unitPrice: 520 },
+        { id: "q7i2", kind: "material", description: "Madeira de carvalho e ferragens", quantity: 1, unit: "un", unitPrice: 240 },
+      ],
+    },
+    {
+      id: "q8",
+      clientId: "c3",
+      clientName: "Café Central (D. Fernanda)",
+      reference: "2026-002",
+      status: "aceite",
+      sentAt: daysAgo(140),
+      paidAt: daysAgo(132),
+      createdAt: daysAgo(141),
+      items: [
+        { id: "q8i1", kind: "mao_de_obra", description: "Reparação de portadas e balcão", quantity: 1, unit: "un", unitPrice: 380 },
+        { id: "q8i2", kind: "material", description: "Madeira e ferragens", quantity: 1, unit: "un", unitPrice: 130 },
+      ],
+    },
+    {
       id: "q4",
       clientId: "c4",
       clientName: "Joana Melo",
@@ -331,5 +450,5 @@ export function seedData(): DemoData {
     },
   ];
 
-  return { clients, requests, quotes };
+  return { profile, clients, requests, quotes };
 }

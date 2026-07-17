@@ -13,17 +13,17 @@ import {
   quoteTotal,
   waLink,
 } from "@/lib/demo/data";
-import { useDemo } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 export default function ClienteDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { ready, demo, data } = useDemo();
+  const { ready, data } = useAppData();
 
   if (!ready) return null;
 
   const client = data?.clients.find((c) => c.id === id);
 
-  if (!demo || !client) {
+  if (!client) {
     return (
       <div className="mx-auto max-w-lg p-4">
         <Link

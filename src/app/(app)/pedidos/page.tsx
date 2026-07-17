@@ -7,7 +7,7 @@ import {
   type RequestStatus,
   formatRelative,
 } from "@/lib/demo/data";
-import { useDemo } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 const SECTION_ORDER: RequestStatus[] = [
   "novo",
@@ -26,11 +26,11 @@ const SECTION_DOT: Record<RequestStatus, string> = {
 };
 
 export default function PedidosPage() {
-  const { ready, demo, data } = useDemo();
+  const { ready, data } = useAppData();
 
-  if (!ready) return null;
+  if (!ready || !data) return null;
 
-  if (!demo || !data) {
+  if (data.requests.length === 0) {
     return (
       <div className="mx-auto max-w-lg p-4">
         <h1 className="text-2xl font-bold text-zinc-900">Pedidos</h1>

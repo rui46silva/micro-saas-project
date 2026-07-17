@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Search, Users } from "lucide-react";
-import { useDemo } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 export default function ClientesPage() {
-  const { ready, demo, data } = useDemo();
+  const { ready, data } = useAppData();
   const [search, setSearch] = useState("");
 
-  if (!ready) return null;
+  if (!ready || !data) return null;
 
-  if (!demo || !data) {
+  if (data.clients.length === 0) {
     return (
       <div className="mx-auto max-w-lg p-4">
         <h1 className="text-2xl font-bold text-zinc-900">Clientes</h1>

@@ -10,19 +10,19 @@ import {
   formatEUR,
   quoteTotal,
 } from "@/lib/demo/data";
-import { useDemo } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 const IVA = 0.23;
 
 export default function OrcamentoPdfPage() {
   const { id } = useParams<{ id: string }>();
-  const { ready, demo, data } = useDemo();
+  const { ready, data, profile } = useAppData();
 
   if (!ready) return null;
 
   const quote = data?.quotes.find((q) => q.id === id);
 
-  if (!demo || !quote) {
+  if (!quote) {
     return (
       <div className="mx-auto max-w-lg p-4">
         <Link
@@ -69,11 +69,17 @@ export default function OrcamentoPdfPage() {
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 text-white">
               <Hammer className="h-7 w-7" strokeWidth={2.2} />
             </div>
-            <h1 className="mt-2 text-xl font-bold">Carpintaria Exemplo</h1>
+            <h1 className="mt-2 text-xl font-bold">
+              {profile?.businessName ?? "A minha empresa"}
+            </h1>
             <p className="text-sm text-zinc-500">
-              Rua da Oficina 8, Braga · 910 000 000
-              <br />
-              NIF 123 456 789
+              {[profile?.address, profile?.phone].filter(Boolean).join(" · ")}
+              {profile?.nif && (
+                <>
+                  <br />
+                  NIF {profile.nif}
+                </>
+              )}
             </p>
           </div>
           <div className="text-right">

@@ -67,9 +67,9 @@ Resolver a dor nº 1: **orçamentos e pedidos perdidos.**
 
 1. **Criar o projeto Supabase** (grátis) em [supabase.com](https://supabase.com)
    — escolher a região `eu-west` (Irlanda) ou `eu-central` (Frankfurt).
-2. **Aplicar o schema:** copiar o conteúdo de
-   `supabase/migrations/20260716000000_initial_schema.sql` para o SQL Editor
-   do dashboard e executar (ou usar a CLI: `supabase db push`).
+2. **Aplicar o schema:** copiar o conteúdo de cada ficheiro de
+   `supabase/migrations/` (por ordem) para o SQL Editor do dashboard e
+   executar (ou usar a CLI: `supabase db push`).
 3. **Configurar variáveis:** copiar `.env.example` para `.env.local` e
    preencher com o URL e a anon key do projeto (Project Settings → API).
 4. **Instalar e arrancar:**
@@ -117,6 +117,23 @@ supabase/
 Cada `git push` passa a fazer deploy automático: a branch de produção vai
 para o domínio principal e as outras branches geram previews.
 
+## Contas, administração e dashboard
+
+- **Uma conta por empresa:** no primeiro login, o profissional preenche nome
+  da empresa, ofício e telemóvel (onboarding de 3 campos).
+- **Administração** (`/admin`): reservada a perfis com `is_admin = true` —
+  ativar uma vez no SQL Editor:
+  `update profiles set is_admin = true where id = (select id from auth.users where email = 'o-teu-email');`
+  O admin pode personalizar os dados de qualquer empresa e **pausar/reativar
+  contas** com um motivo (ex.: falta de pagamento). Uma conta pausada fica
+  bloqueada: o cliente vê um aviso em ecrã inteiro com o motivo e o contacto
+  do suporte, e as escritas são recusadas também ao nível da base de dados
+  (RLS).
+- **Dashboard "Negócio"** (4.º separador): dinheiro recebido este mês e
+  gráfico dos últimos 6 meses, valores por receber e em aberto, taxa de
+  aceitação de orçamentos, clientes (total e novos), satisfação média dos
+  trabalhos avaliados e trabalhos em curso/concluídos.
+
 ## Modo demonstração
 
 No ecrã de login, o botão **"👀 Ver demonstração"** entra na app sem conta,
@@ -132,7 +149,7 @@ Na versão real, estes ecrãs passam a ler/escrever no Supabase — o modo demo
 
 ## Estado
 
-🚧 MVP demonstrável: PWA Next.js + Supabase (auth, schema com RLS) e modo
-demo completo com todos os fluxos da Fase 1 — pedidos, orçamentos com
-sugestão de itens, envio por WhatsApp, follow-up e PDF. Próximo passo:
-ligar os ecrãs ao Supabase (dados reais).
+✅ MVP operacional: todos os ecrãs ligados ao Supabase (dados reais por
+conta), onboarding de empresa, administração com pausa de contas, dashboard
+de saúde do negócio e modo demo completo. Próximos passos: upload real de
+fotos, IA real na sugestão de orçamentos, follow-up automático agendado.

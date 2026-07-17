@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Camera, MessageCircle, Phone, Plus } from "lucide-react";
+import {
+  ArrowLeft,
+  Camera,
+  MessageCircle,
+  Phone,
+  Plus,
+  Star,
+} from "lucide-react";
 import {
   QUOTE_STATUS_LABEL,
   QUOTE_STATUS_STYLE,
@@ -14,7 +21,7 @@ import {
   quoteTotal,
   waLink,
 } from "@/lib/demo/data";
-import { useDemo } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 const STATUS_FLOW: RequestStatus[] = [
   "novo",
@@ -26,13 +33,13 @@ const STATUS_FLOW: RequestStatus[] = [
 
 export default function PedidoDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { ready, demo, data, update } = useDemo();
+  const { ready, data, setRequestStatus, setRequestRating } = useAppData();
 
   if (!ready) return null;
 
   const request = data?.requests.find((r) => r.id === id);
 
-  if (!demo || !request) {
+  if (!request) {
     return (
       <div className="mx-auto max-w-lg p-4">
         <Link
@@ -126,13 +133,7 @@ export default function PedidoDetailPage() {
             <button
               key={s}
               type="button"
-              onClick={() =>
-                update((d) => {
-                  const r = d.requests.find((x) => x.id === request.id);
-                  if (r) r.status = s;
-                  return d;
-                })
-              }
+              onClick={() => setRequestStatus(request.id, s)}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
                 request.status === s
                   ? "bg-blue-600 text-white shadow-sm"
@@ -144,6 +145,33 @@ export default function PedidoDetailPage() {
           ))}
         </div>
       </section>
+
+      {request.status === "concluido" && (
+        <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            O cliente ficou satisfeito?
+          </h2>
+          <div className="mt-2 flex gap-1">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setRequestRating(request.id, n)}
+                aria-label={`${n} estrelas`}
+                className="p-1"
+              >
+                <Star
+                  className={`h-8 w-8 ${
+                    (request.rating ?? 0) >= n
+                      ? "fill-amber-400 text-amber-400"
+                      : "text-zinc-300"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
         <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600">

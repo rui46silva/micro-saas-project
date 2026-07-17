@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import {
   AlarmClock,
   ArrowLeft,
+  BadgeEuro,
   Check,
   FileText,
   MessageCircle,
@@ -16,24 +17,25 @@ import {
   QUOTE_STATUS_STYLE,
   type ItemKind,
   daysSince,
+  formatDate,
   formatEUR,
   needsFollowUp,
   quoteTotal,
   waLink,
 } from "@/lib/demo/data";
-import { useDemo } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 const IVA = 0.23;
 
 export default function OrcamentoDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { ready, demo, data, update } = useDemo();
+  const { ready, data, setQuoteStatus, markQuotePaid } = useAppData();
 
   if (!ready) return null;
 
   const quote = data?.quotes.find((q) => q.id === id);
 
-  if (!demo || !quote) {
+  if (!quote) {
     return (
       <div className="mx-auto max-w-lg p-4">
         <Link
@@ -51,24 +53,11 @@ export default function OrcamentoDetailPage() {
   }
 
   const client = data!.clients.find((c) => c.id === quote.clientId);
+  const request = data!.requests.find((r) => r.id === quote.requestId);
+  const phone = client?.phone || request?.clientPhone;
   const subtotal = quoteTotal(quote);
   const total = subtotal * (1 + IVA);
   const kinds: ItemKind[] = ["mao_de_obra", "material", "outro"];
-
-  function setStatus(status: "enviado" | "aceite" | "recusado") {
-    update((d) => {
-      const q = d.quotes.find((x) => x.id === quote!.id);
-      if (!q) return d;
-      q.status = status;
-      if (status === "enviado") q.sentAt = new Date().toISOString();
-      const r = d.requests.find((x) => x.id === q.requestId);
-      if (r) {
-        if (status === "enviado") r.status = "orcamentado";
-        if (status === "aceite") r.status = "aceite";
-      }
-      return d;
-    });
-  }
 
   const sendMessage = `Bom dia! Segue o orçamento ${quote.reference}: total ${formatEUR(total)} (IVA incluído). Qualquer dúvida, diga. Obrigado!`;
 
@@ -89,14 +78,21 @@ export default function OrcamentoDetailPage() {
           </h1>
           <p className="font-medium text-zinc-600">{quote.clientName}</p>
         </div>
-        <span
-          className={`mt-1 shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${QUOTE_STATUS_STYLE[quote.status]}`}
-        >
-          {QUOTE_STATUS_LABEL[quote.status]}
+        <span className="mt-1 flex shrink-0 flex-col items-end gap-1">
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-semibold ${QUOTE_STATUS_STYLE[quote.status]}`}
+          >
+            {QUOTE_STATUS_LABEL[quote.status]}
+          </span>
+          {quote.paidAt && (
+            <span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">
+              Pago
+            </span>
+          )}
         </span>
       </div>
 
-      {needsFollowUp(quote) && client && (
+      {needsFollowUp(quote) && phone && (
         <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
           <p className="flex items-center gap-2 font-bold text-amber-900">
             <AlarmClock className="h-5 w-5" />
@@ -104,7 +100,7 @@ export default function OrcamentoDetailPage() {
           </p>
           <a
             href={waLink(
-              client.phone,
+              phone,
               `Bom dia! Enviei-lhe o orçamento ${quote.reference} há uns dias — ficou com alguma dúvida? Obrigado!`
             )}
             target="_blank"
@@ -161,15 +157,20 @@ export default function OrcamentoDetailPage() {
           <span>Total</span>
           <span>{formatEUR(total)}</span>
         </div>
+        {quote.paidAt && (
+          <p className="mt-2 text-sm font-medium text-emerald-700">
+            Recebido a {formatDate(quote.paidAt)}
+          </p>
+        )}
       </section>
 
       <div className="mt-4 flex flex-col gap-2">
-        {quote.status === "rascunho" && client && (
+        {quote.status === "rascunho" && phone && (
           <a
-            href={waLink(client.phone, sendMessage)}
+            href={waLink(phone, sendMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => setStatus("enviado")}
+            onClick={() => setQuoteStatus(quote.id, "enviado")}
             className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 p-4 text-lg font-semibold text-white shadow-sm active:bg-emerald-700"
           >
             <MessageCircle className="h-5 w-5" />
@@ -180,7 +181,7 @@ export default function OrcamentoDetailPage() {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => setStatus("aceite")}
+              onClick={() => setQuoteStatus(quote.id, "aceite")}
               className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-emerald-600 p-4 font-semibold text-white shadow-sm active:bg-emerald-700"
             >
               <Check className="h-5 w-5" strokeWidth={2.5} />
@@ -188,13 +189,23 @@ export default function OrcamentoDetailPage() {
             </button>
             <button
               type="button"
-              onClick={() => setStatus("recusado")}
+              onClick={() => setQuoteStatus(quote.id, "recusado")}
               className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-red-300 bg-white p-4 font-semibold text-red-700 shadow-sm active:bg-red-50"
             >
               <X className="h-5 w-5" strokeWidth={2.5} />
               Recusado
             </button>
           </div>
+        )}
+        {quote.status === "aceite" && !quote.paidAt && (
+          <button
+            type="button"
+            onClick={() => markQuotePaid(quote.id)}
+            className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 p-4 text-lg font-semibold text-white shadow-sm active:bg-emerald-700"
+          >
+            <BadgeEuro className="h-5 w-5" />
+            Marcar como recebido
+          </button>
         )}
         <Link
           href={`/orcamentos/${quote.id}/pdf`}

@@ -12,7 +12,8 @@ import {
   type PresetItem,
   formatEUR,
 } from "@/lib/demo/data";
-import { newId, useDemo } from "@/lib/demo/store";
+import { newId } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 // Sugestão de itens a partir do texto do pedido. Na versão real será a IA
 // (Claude) a estruturar o orçamento; aqui usamos palavras-chave para
@@ -61,13 +62,14 @@ function NovoOrcamento() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestId = searchParams.get("pedido") ?? undefined;
-  const { ready, demo, data, update } = useDemo();
+  const { ready, data, createQuote } = useAppData();
 
   const [items, setItems] = useState<DemoQuoteItem[]>([]);
   const [editedDescription, setEditedDescription] = useState<string | null>(
     null
   );
   const [suggested, setSuggested] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const request = data?.requests.find((r) => r.id === requestId);
   // Pré-preenche com a descrição do pedido até o utilizador editar.
@@ -75,23 +77,7 @@ function NovoOrcamento() {
 
   if (!ready) return null;
 
-  if (!demo || !data) {
-    return (
-      <div className="mx-auto max-w-lg p-4">
-        <Link
-          href="/orcamentos"
-          className="flex items-center gap-1 font-medium text-blue-700"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Orçamentos
-        </Link>
-        <p className="mt-8 text-center text-zinc-600">
-          Disponível quando ligarmos a base de dados. Experimente no modo
-          demonstração.
-        </p>
-      </div>
-    );
-  }
+  if (!data) return null;
 
   function addPreset(preset: PresetItem) {
     setItems((prev) => {
@@ -133,24 +119,16 @@ function NovoOrcamento() {
     setSuggested(true);
   }
 
-  function handleSave() {
-    const clientName = request?.clientName ?? "Cliente";
-    const id = newId();
-    update((d) => {
-      const nextNumber = d.quotes.length + 12; // continua a numeração da demo
-      d.quotes.unshift({
-        id,
-        requestId,
-        clientId: request?.clientId,
-        clientName,
-        reference: `2026-${String(nextNumber).padStart(3, "0")}`,
-        status: "rascunho",
-        createdAt: new Date().toISOString(),
-        items,
-      });
-      return d;
+  async function handleSave() {
+    setSaving(true);
+    const id = await createQuote({
+      requestId,
+      clientId: request?.clientId,
+      clientName: request?.clientName ?? "Cliente",
+      items,
     });
-    router.push(`/orcamentos/${id}`);
+    setSaving(false);
+    if (id) router.push(`/orcamentos/${id}`);
   }
 
   const subtotal = items.reduce((s, i) => s + i.quantity * i.unitPrice, 0);
@@ -268,11 +246,11 @@ function NovoOrcamento() {
           </div>
           <button
             type="button"
-            disabled={items.length === 0}
+            disabled={items.length === 0 || saving}
             onClick={handleSave}
             className="rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-sm active:bg-blue-700 disabled:opacity-40"
           >
-            Guardar
+            {saving ? "A guardar…" : "Guardar"}
           </button>
         </div>
       </div>

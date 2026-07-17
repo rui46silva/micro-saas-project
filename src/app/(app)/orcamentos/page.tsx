@@ -11,14 +11,14 @@ import {
   quoteTotal,
   waLink,
 } from "@/lib/demo/data";
-import { useDemo } from "@/lib/demo/store";
+import { useAppData } from "@/lib/app-data";
 
 export default function OrcamentosPage() {
-  const { ready, demo, data } = useDemo();
+  const { ready, data } = useAppData();
 
-  if (!ready) return null;
+  if (!ready || !data) return null;
 
-  if (!demo || !data) {
+  if (data.quotes.length === 0) {
     return (
       <div className="mx-auto max-w-lg p-4">
         <h1 className="text-2xl font-bold text-zinc-900">Orçamentos</h1>
@@ -54,6 +54,9 @@ export default function OrcamentosPage() {
           <ul className="mt-2 flex flex-col gap-3">
             {followUps.map((q) => {
               const client = data.clients.find((c) => c.id === q.clientId);
+              const phone =
+                client?.phone ||
+                data.requests.find((r) => r.id === q.requestId)?.clientPhone;
               return (
                 <li key={q.id} className="rounded-xl bg-white p-3 shadow-sm">
                   <Link href={`/orcamentos/${q.id}`} className="block">
@@ -65,10 +68,10 @@ export default function OrcamentosPage() {
                       {daysSince(q.sentAt!)} dias
                     </span>
                   </Link>
-                  {client && (
+                  {phone && (
                     <a
                       href={waLink(
-                        client.phone,
+                        phone,
                         `Bom dia! Enviei-lhe o orçamento ${q.reference} há uns dias — ficou com alguma dúvida? Diga-me algo, para eu poder reservar-lhe a data. Obrigado!`
                       )}
                       target="_blank"

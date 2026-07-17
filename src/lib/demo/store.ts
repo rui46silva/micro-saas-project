@@ -8,7 +8,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 import { type DemoData, seedData } from "./data";
 
-const STORAGE_KEY = "apontado-demo-v1";
+const STORAGE_KEY = "apontado-demo-v2";
 const COOKIE = "apontado_demo";
 
 interface Snapshot {
